@@ -50,11 +50,6 @@ int main(int argc, char *argv[])
 	fclose(tokenFile);
 	token[strcspn(token, "\n")] = 0;
 	
-	/*
-	sprintf(telegramURL, "https://api.telegram.org/bot%s/getUpdates", token);
-	
-	CURLcode res;*/
-	
 	CURL *curl = curl_easy_init();
 	if(!curl){
 		printf("Error inicializado CURL\n");
@@ -178,14 +173,15 @@ void responder(CURL *curl, const char *token, long long chat_id, const char *msg
 }
 
 void registrar(const char *nombre, const char *msg, long fecha_unix){
-	FILE *file = fopen("registro.txt", "a");
-	if (!file){
+	FILE *log = fopen("registro.txt", "a");
+	if (!log){
 		perror("Error. No se pudo abrir el archivo.");
 		return;
 	}
 	time_t now = fecha_unix;
 	struct tm *info = localtime(&now);
-	fprintf(file, "[%02d:%02d:%02d] %s: %s\n", info->tm_hour, info->tm_min, info->tm_sec, nombre, msg);
+	fprintf(log, "[%02d:%02d:%02d] %s: %s\n", info->tm_hour, info->tm_min, info->tm_sec, nombre, msg);
 
-	fclose(file);
+	fclose(log);
 }
+
