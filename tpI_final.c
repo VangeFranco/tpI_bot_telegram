@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 		return 1; 
 	}
 	if (fgets(token, sizeof(token), tokenFile) == NULL) {
-		printf("El archivo del token no se pudo leer o está vacío.\n");
+		printf("El archivo del token no se pudo leer o estÃ¡ vacÃ­o.\n");
 		fclose(tokenFile);
 		exit(1);
 	}
@@ -77,6 +77,12 @@ int main(int argc, char *argv[])
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cb);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 		CURLcode res = curl_easy_perform(curl);
+
+		if (res != CURLE_OK) {
+			printf("Error CÃƒÂ³digo: %d\n", res);
+			sleep(2);
+			continue;	
+		}
 		
 		if (res == CURLE_OK && chunk.response) {
 			printf("Respuesta de telegram:\n%s\n", chunk.response);
@@ -165,7 +171,7 @@ void responder(CURL *curl, const char *token, long long chat_id, const char *msg
 	if (res2 == CURLE_OK) {
 		printf("Respuesta enviada a %s: %s\n", usuario, texto);
 	}else {
-		printf("Error. No se pudo enviar el mensaje (Código %d)\n", res2);
+		printf("Error. No se pudo enviar el mensaje (CÃ³digo %d)\n", res2);
 	}
 	
 	if(chunk2.response) free(chunk2.response);
@@ -180,5 +186,6 @@ void registrar(const char *nombre, const char *msg, long fecha_unix){
 	time_t now = fecha_unix;
 	struct tm *info = localtime(&now);
 	fprintf(file, "[%02d:%02d:%02d] %s: %s\n", info->tm_hour, info->tm_min, info->tm_sec, nombre, msg);
+
 	fclose(file);
 }
